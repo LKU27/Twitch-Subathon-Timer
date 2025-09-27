@@ -21,7 +21,7 @@ A simple, powerful Subathon timer that works entirely in your browser - no datab
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/LKU27/Twitch-Subathon-Timer
    cd twitch-subathon-timer
    ```
 
