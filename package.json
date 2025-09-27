@@ -5,7 +5,7 @@
   "main": "client/src/main.jsx",
   "scripts": {
     "dev": "cd client && npm run dev",
-    "build": "cd client && npm run build",
+    "build": "cd client && npm install && npm run build",
     "preview": "cd client && npm run preview",
     "install:all": "npm install && cd client && npm install"
   },

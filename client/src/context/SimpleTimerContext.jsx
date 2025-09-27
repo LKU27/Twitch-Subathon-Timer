@@ -22,10 +22,8 @@ export const TimerProvider = ({ children }) => {
   // Load timer state from localStorage on mount
   useEffect(() => {
     const savedState = localStorage.getItem('subathon_timer_state');
-    console.log('Loading saved state:', savedState); // Debug log
     if (savedState) {
       const parsedState = JSON.parse(savedState);
-      console.log('Parsed state:', parsedState); // Debug log
       setTimerState(parsedState);
       setIsRestored(true);
       
@@ -39,7 +37,6 @@ export const TimerProvider = ({ children }) => {
       } else {
         // For paused or stopped timers, use the exact time remaining that was saved
         const remaining = parsedState.timeRemaining || (parsedState.totalTime - parsedState.pausedTime);
-        console.log('Restoring paused time:', remaining); // Debug log
         setTimeRemaining(Math.max(0, remaining));
       }
     }
@@ -53,7 +50,6 @@ export const TimerProvider = ({ children }) => {
         ...timerState,
         timeRemaining: timeRemaining
       };
-      console.log('Saving timer state:', stateToSave); // Debug log
       localStorage.setItem('subathon_timer_state', JSON.stringify(stateToSave));
     }
   }, [timerState, timeRemaining, isLoading]);
@@ -103,7 +99,6 @@ export const TimerProvider = ({ children }) => {
       lastUpdated: now.toISOString()
     };
     
-    console.log('Pausing timer with state:', newState); // Debug log
     setTimerState(newState);
     setTimeRemaining(currentTimeRemaining);
   };
