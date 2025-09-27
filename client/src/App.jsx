@@ -1,170 +1,137 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { TimerProvider } from './context/TimerContext';
+import { TimerProvider } from './context/SimpleTimerContext';
+import { TimerStyleProvider } from './context/TimerStyleContext';
 import TimerControl from './components/TimerControl';
 import TimerDisplay from './components/TimerDisplay';
-import Auth from './components/Auth';
 import './index.css';
 
 function App() {
   return (
     <Router>
-      <AuthProvider>
+      <TimerStyleProvider>
         <TimerProvider>
-          <div className="min-h-screen bg-gradient-to-br from-purple-900 to-gray-900">
+          <div className="min-h-screen">
             <Routes>
               <Route path="/" element={<MainApp />} />
               <Route path="/obs" element={<OBSView />} />
             </Routes>
           </div>
         </TimerProvider>
-      </AuthProvider>
+      </TimerStyleProvider>
     </Router>
   );
 }
 
 function MainApp() {
-  const { user, isAuthenticated, signOut, isLoading } = useAuth();
-  const [showAuth, setShowAuth] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
 
-  const handleAuthSuccess = () => {
-    setShowAuth(false);
+  const copyToClipboard = async () => {
+    const obsUrl = `${window.location.origin}/obs`;
+    try {
+      await navigator.clipboard.writeText(obsUrl);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000); // Hide success message after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = obsUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
   };
-
-  const handleLogout = () => {
-    signOut();
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 to-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-          <p className="text-white">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (showAuth) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Auth onAuthSuccess={handleAuthSuccess} onBack={() => setShowAuth(false)} />
-      </div>
-    );
-  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-white mb-2">
+    <div className="container mx-auto px-4 py-2">
+      <header className="text-center mb-3 animate-fade-in-up">
+        <h1 className="text-3xl font-bold mb-1" style={{
+          background: 'linear-gradient(45deg, #8b5cf6, #a855f7, #c084fc, #e879f9)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          animation: 'purpleGlow 3s ease-in-out infinite'
+        }}>
           Subathon Timer
         </h1>
-        <p className="text-gray-300 mb-2">
+        <p className="text-white/80 text-sm mb-2">
           Made by lordknight__
         </p>
-        <div className="bg-yellow-600/20 border border-yellow-500/30 rounded-lg p-3 max-w-md mx-auto">
-          <p className="text-yellow-400 text-sm font-medium">
-            ⚠️ This website is currently in beta. Features may change.
+        <div className="glass rounded-lg p-2 max-w-sm mx-auto">
+          <p className="text-yellow-300 text-xs font-medium">
+            ⚠️ Beta - Features may change
           </p>
         </div>
       </header>
 
-      {!isAuthenticated ? (
-        <div className="max-w-md mx-auto">
-          <div className="bg-gray-800 rounded-lg p-8 text-center">
-            <h2 className="text-2xl font-bold text-white mb-4">
-              Welcome to Subathon Timer 
-              <div><h2>ദ്ദി/ᐠ｡‸｡ᐟ\</h2></div>
-            </h2>
-            <p className="text-gray-300 mb-4">
-              Create an account or login to start using your subathon timer
-            </p>
-            
-            <div className="bg-yellow-600/20 border border-yellow-500/30 rounded-lg p-3 mb-6">
-              <p className="text-yellow-400 text-sm font-medium">
-                ⚠️ Beta Version - Features may change
-              </p>
-            </div>
-            
-            <div className="space-y-4">
-              <button
-                onClick={() => setShowAuth(true)}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
-              >
-                Get Started
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-gray-800 rounded-lg p-6 mb-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">
-                    {user?.name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
-                  </span>
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-white">
-                    Welcome, {user?.name || user?.email}!
-                  </h2>
-                  <p className="text-gray-400">Signed in with email</p>
-                </div>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="max-w-6xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-1 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
             <TimerControl />
+          </div>
+          <div className="lg:col-span-2 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             <TimerDisplay />
           </div>
+        </div>
 
-          <div className="mt-8 text-center">
-            <div className="bg-gray-800 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-2">
-                OBS Browser Source
-              </h3>
-              <p className="text-gray-300 mb-4">
-                Use this URL in OBS as a Browser Source for a clean timer display:
-              </p>
-              <div className="bg-gray-700 rounded p-3 mb-4">
-                <code className="text-green-400">
-                  {window.location.origin}/obs
-                </code>
+        <div className="mt-3 text-center animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+          <div className="glass rounded-xl p-3 hover-lift">
+            <h3 className="text-base font-semibold text-white mb-2">
+              OBS Browser Source
+            </h3>
+            <div 
+              className="glass rounded-lg p-2 mb-2 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-lg group clickable-url"
+              onClick={copyToClipboard}
+              title="Click to copy to clipboard"
+            >
+              <code className="text-green-300 text-xs font-mono group-hover:text-green-200 transition-colors">
+                {window.location.origin}/obs
+              </code>
+              <div className="mt-1 text-xs text-white/60 group-hover:text-white/80 transition-colors">
+                Click to copy
               </div>
-              <p className="text-sm text-gray-400">
-                Recommended settings: Width: 400px, Height: 200px, FPS: 30
-              </p>
             </div>
+            {copySuccess && (
+              <div className="mb-2 p-2 bg-green-500/20 border border-green-500/30 rounded-lg animate-bounce-custom">
+                <p className="text-green-300 text-xs font-medium">
+                  ✅ URL copied to clipboard!
+                </p>
+              </div>
+            )}
+            <p className="text-xs text-white/60">
+              Recommended: 400x200px, 30 FPS
+            </p>
           </div>
         </div>
-      )}
 
-      {/* Footer */}
-      <footer className="mt-16 text-center">
-        <div className="border-t border-gray-700 pt-6">
-          <p className="text-gray-400 text-sm">
-            Copyright © 2025 L.K.U. All Rights Reserved.
-          </p>
-        </div>
-      </footer>
+        {/* Footer */}
+        <footer className="mt-3 text-center animate-fade-in" style={{ animationDelay: '0.7s' }}>
+          <div className="border-t border-white/20 pt-2">
+            <p className="text-white/60 text-xs">
+              Copyright © 2025 L.K.U. All Rights Reserved.
+            </p>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }
 
 function OBSView() {
   return (
-    <div className="min-h-screen bg-transparent flex items-center justify-center">
+    <div 
+      className="min-h-screen flex items-center justify-center obs-mode" 
+      style={{ 
+        backgroundColor: 'transparent',
+        background: 'transparent',
+        margin: 0,
+        padding: 0
+      }}
+    >
       <TimerDisplay isOBSMode={true} />
     </div>
   );
