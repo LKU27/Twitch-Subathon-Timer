@@ -75,7 +75,7 @@ function MainApp() {
         <div className="max-w-md mx-auto">
           <div className="bg-gray-800 rounded-lg p-8 text-center">
             <h2 className="text-2xl font-bold text-white mb-4">
-              Welcome to Subathon Timer ദ്ദി/ᐠ｡‸｡ᐟ\
+              Welcome to Subathon Timer </br> ദ്ദി/ᐠ｡‸｡ᐟ\
             </h2>
             <p className="text-gray-300 mb-4">
               Create an account or login to start using your subathon timer
