@@ -50,7 +50,7 @@ function MainApp() {
   if (showAuth) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <Auth onAuthSuccess={handleAuthSuccess} />
+        <Auth onAuthSuccess={handleAuthSuccess} onBack={() => setShowAuth(false)} />
       </div>
     );
   }
@@ -62,7 +62,7 @@ function MainApp() {
           Subathon Timer
         </h1>
         <p className="text-gray-300 mb-2">
-          Made by LK
+          Made by lordknight__
         </p>
         <div className="bg-yellow-600/20 border border-yellow-500/30 rounded-lg p-3 max-w-md mx-auto">
           <p className="text-yellow-400 text-sm font-medium">
