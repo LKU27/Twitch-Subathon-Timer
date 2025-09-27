@@ -1,0 +1,22 @@
+{
+  "name": "subathon-timer-lk",
+  "version": "1.0.0",
+  "description": "A comprehensive Subathon timer with OBS integration - Made by LK",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm install --production",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "keywords": ["twitch", "subathon", "timer", "obs"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
